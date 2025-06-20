@@ -1,11 +1,12 @@
 import 'package:go_router/go_router.dart';
-import 'package:mynotewriter/models/note_model.dart';
-import 'package:mynotewriter/screens/contact_us_screen.dart';
-import 'package:mynotewriter/screens/help_screen.dart';
-import 'package:mynotewriter/screens/settings_screen.dart';
 
+import '../models/note_model.dart';
+import '../screens/contact_us_screen.dart';
+import '../screens/create_new_note_screen.dart';
+import '../screens/help_screen.dart';
 import '../screens/note_viewer_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/privacy_policy_screen.dart';
 import 'app_router_paths.dart';
 
 class GoRouterClass {
@@ -31,9 +32,9 @@ class GoRouterClass {
 
       // Settings Screen
       GoRoute(
-        name: AppRouterPaths.settingsScreen,
-        path: "/${AppRouterPaths.settingsScreen}",
-        builder: (context, state) => SettingsScreen(),
+        name: AppRouterPaths.privacyPolicyScreen,
+        path: "/${AppRouterPaths.privacyPolicyScreen}",
+        builder: (context, state) => PrivacyPolicyScreen(),
       ),
 
       // Contact Us Screen
@@ -48,6 +49,16 @@ class GoRouterClass {
         name: AppRouterPaths.helpScreen,
         path: "/${AppRouterPaths.helpScreen}",
         builder: (context, state) => HelpScreen(),
+      ),
+
+      // Home Screen
+      GoRoute(
+        name: AppRouterPaths.createNewNoteScreen,
+        path: "/${AppRouterPaths.createNewNoteScreen}",
+        builder: (context, state) {
+          final NoteModel? noteModel = state.extra as NoteModel?;
+          return CreateNewNoteScreen(noteModel: noteModel);
+        },
       ),
     ],
   );

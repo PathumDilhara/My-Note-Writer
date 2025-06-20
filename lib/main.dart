@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mynotewriter/utils/router.dart';
 
 import 'utils/custom_theme.dart';
+import 'utils/router.dart';
 
 void main() {
   runApp(MyApp());

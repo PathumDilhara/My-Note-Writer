@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note_model.dart';
 import '../test_data.dart';
@@ -17,19 +18,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<NoteModel> notes = testNotes;
+
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: Image.asset("assets/logo.png"),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset("assets/logo_bg.png", fit: BoxFit.fitWidth),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: PopupMenuButton(
-              color: AppColors.primWhiteColor,
+              color:
+                  isDark
+                      ? AppColors.primDarkScaffoldColor
+                      : AppColors.primWhiteColor,
               menuPadding: EdgeInsets.zero,
               popUpAnimationStyle: AnimationStyle(
                 curve: Curves.decelerate,
@@ -45,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.help),
+                        Icon(Icons.help_outline_rounded),
                         SizedBox(width: 10),
                         Text("Help"),
                       ],
@@ -53,13 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   PopupMenuItem(
-                    value: "Settings",
+                    value: "Privacy_Policy",
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.settings),
+                        Icon(Icons.privacy_tip_outlined),
                         SizedBox(width: 10),
-                        Text("Settings"),
+                        Text("Privacy Policy"),
                       ],
                     ),
                   ),
@@ -69,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.contacts),
+                        Icon(Icons.contacts_outlined),
                         SizedBox(width: 10),
                         Text("Contact Us"),
                       ],
@@ -79,24 +88,39 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               padding: EdgeInsets.only(right: 50),
               onSelected: (value) {
-                if (value == "Settings") {
-                  GoRouter.of(context).push("/${AppRouterPaths.settingsScreen}");
+                if (value == "Privacy_Policy") {
+                  GoRouter.of(
+                    context,
+                  ).push("/${AppRouterPaths.privacyPolicyScreen}");
                 } else if (value == "Help") {
                   GoRouter.of(context).push("/${AppRouterPaths.helpScreen}");
                 } else if (value == "Contact_Us") {
-                  GoRouter.of(context).push("/${AppRouterPaths.contactUsScreen}");
+                  GoRouter.of(
+                    context,
+                  ).push("/${AppRouterPaths.contactUsScreen}");
                 }
-
               },
               child: Icon(Icons.more_vert, size: 30),
             ),
           ),
         ],
-        title: Text("MyNoteWriter", style: TextStyle(letterSpacing: 2),),
+        title: Text(
+          "MyNoteWriter",
+          style: TextStyle(
+            letterSpacing: 2,
+            fontSize: 40,
+            fontFamily: GoogleFonts.birthstone().fontFamily,
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: AppColors.primButtonBGColor,
+        onPressed: () {
+          GoRouter.of(context).push("/${AppRouterPaths.createNewNoteScreen}");
+        },
+        backgroundColor:
+            isDark
+                ? AppColors.primButtonBGColorDark
+                : AppColors.primButtonBGColor,
         child: Icon(Icons.add, size: 30, color: AppColors.primWhiteColor),
       ),
       body: Column(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note_model.dart';
+import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
 
 class NoteViewerScreen extends StatefulWidget {
@@ -26,17 +28,19 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    var colorsList =
+        isDark ? AppColors.noteColorsDarkAll : AppColors.noteColorsAll;
     return ValueListenableBuilder(
       valueListenable: selectedColorNotifier,
       builder: (context, value, child) {
         return Scaffold(
-          backgroundColor:
-              AppColors.noteColorsAll[selectedColorNotifier.value][2],
+          backgroundColor: colorsList[selectedColorNotifier.value][2],
           appBar: AppBar(
             title: Text(
               widget.noteModel.title,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 23,
                 fontFamily: GoogleFonts.poppins().fontFamily,
               ),
             ),
@@ -46,16 +50,23 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return _buildColorPicker();
+                      return _buildColorPicker(colorsList);
                     },
                   );
                 },
                 icon: Icon(Icons.color_lens),
               ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
+              IconButton(
+                onPressed: () {
+                  GoRouter.of(context).push(
+                    "/${AppRouterPaths.createNewNoteScreen}",
+                    extra: widget.noteModel,
+                  );
+                },
+                icon: Icon(Icons.edit_rounded),
+              ),
             ],
-            backgroundColor:
-                AppColors.noteColorsAll[selectedColorNotifier.value][0],
+            backgroundColor: colorsList[selectedColorNotifier.value][0],
           ),
           body: LayoutBuilder(
             builder: (context, constraints) {
@@ -71,9 +82,8 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                               : screenHeight,
                       child: CustomPaint(
                         painter: RuledPaperPainter(
-                          lineColor: AppColors
-                              .noteColorsAll[selectedColorNotifier.value][0]
-                              .withValues(alpha: 0.3),
+                          lineColor: colorsList[selectedColorNotifier.value][0]
+                              .withValues(alpha: isDark ? 0.8 : 0.3),
                           lineHeight: 32,
                         ),
                       ),
@@ -109,25 +119,24 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     );
   }
 
-  Widget _buildColorPicker() {
+  Widget _buildColorPicker(var colorsList) {
     return ValueListenableBuilder(
       valueListenable: selectedColorNotifier,
       builder: (context, value, child) {
         return AlertDialog(
-          backgroundColor:
-              AppColors.noteColorsAll[selectedColorNotifier.value][2],
+          backgroundColor: colorsList[selectedColorNotifier.value][2],
           content: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 0,
-                  childAspectRatio: 2,
+                  childAspectRatio: 1,
                 ),
-                itemCount: AppColors.noteColorsAll.length,
+                itemCount: colorsList.length,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
@@ -135,35 +144,26 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                     onTap: () {
                       selectedColorNotifier.value = index;
                     },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    child: Stack(
                       children: [
-                        Stack(
-                          children: [
-                            Positioned(
-                              child: Icon(
-                                Icons.circle,
-                                color: AppColors.noteColorsAll[index][0],
-                                size: 50,
-                              ),
-                            ),
-                            if (index == selectedColorNotifier.value)
-                              Positioned(
-                                right: 0,
-                                left: 0,
-                                top: 0,
-                                bottom: 0,
-                                child: Icon(Icons.done, color: Colors.white),
-                              ),
-                          ],
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          AppColors.noteColorsAll[index][0],
-                          style: TextStyle(
-                            color: AppColors.noteColorsAll[index][0],
+                        Positioned.fill(
+                          child: Icon(
+                            Icons.circle,
+                            color: colorsList[index][0],
+                            size: 50,
                           ),
                         ),
+                        if (index == selectedColorNotifier.value)
+                          Positioned(
+                            right: 0,
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Icon(
+                              Icons.done,
+                              color: AppColors.primWhiteColor,
+                            ),
+                          ),
                       ],
                     ),
                   );
@@ -176,6 +176,12 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     );
   }
 }
+
+// SizedBox(width: 10),
+// Text(
+//   colorsList[index][1],
+//   style: TextStyle(color: colorsList[index][0]),
+// ),
 
 class RuledPaperPainter extends CustomPainter {
   final Color lineColor;
