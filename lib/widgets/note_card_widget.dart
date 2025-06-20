@@ -19,7 +19,7 @@ class NoteCardWidget extends StatelessWidget {
       width: screenWidth * 0.25,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: noteModel.cardBgColor,
+        color: AppColors.noteColorsAll[noteModel.noteColorIndex][0],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

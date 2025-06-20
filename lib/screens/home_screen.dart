@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-        title: Text("MyNoteWriter"),
+        title: Text("MyNoteWriter", style: TextStyle(letterSpacing: 2),),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},

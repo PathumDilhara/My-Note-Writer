@@ -12,7 +12,7 @@ class AppTheme {
       titleTextStyle: TextStyle(
         fontSize: 40,
         fontWeight: FontWeight.bold,
-        letterSpacing: 2,
+        letterSpacing: 1,
         color: AppColors.primLightMainTextColor,
         fontFamily: GoogleFonts.birthstone().fontFamily,
       ),
