@@ -23,6 +23,12 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     selectedColorNotifier.value = widget.noteModel.noteColorIndex;
   }
 
+  String  _dateTime(DateTime dateTime) {
+    String date = dateTime.toString().split(" ")[0];
+    List<String> time = dateTime.toString().split(" ")[1].split(":");
+    return "$date   ${time[0]}:${time[1]}";
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -73,6 +79,14 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
               return SingleChildScrollView(
                 child: Stack(
                   children: [
+                    Positioned(
+                      left: 0,
+                      top: 12,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(_dateTime(widget.noteModel.updatedAt)),
+                      ),
+                    ),
                     // Full screen painter
                     SizedBox(
                       width: screenWidth,
@@ -99,13 +113,21 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
                         ),
-                        child: Text(
-                          widget.noteModel.description,
-                          style: TextStyle(
-                            fontSize: 16,
-                            height: 2.0,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(height: 36),
+
+                            Text(
+                              widget.noteModel.description,
+                              style: TextStyle(
+                                fontSize: 16,
+                                height: 2.0,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

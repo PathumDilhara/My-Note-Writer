@@ -60,7 +60,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
-            title: _buildNoteTitleInputField(),
+            title: _buildNoteTitleInputField(isDark: isDark),
             backgroundColor: colorsList[selectedColorNotifier.value][0],
             actions: [
               // Color
@@ -88,13 +88,19 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
                             title: _noteTitleController.text,
                             description: _noteContentController.text,
                             noteColorIndex: selectedColorNotifier.value,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
                           );
+
                           saveDataInDatabase(note);
                           GoRouter.of(context).pop();
                         },
                         icon: Icon(
                           Icons.done,
-                          color: AppColors.primBlackColor,
+                          color:
+                              isDark
+                                  ? AppColors.primWhiteColor
+                                  : AppColors.primBlackColor,
                           size: 30,
                         ),
                       )
@@ -135,7 +141,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
                         ),
-                        child: _buildNoteContentInputField(),
+                        child: _buildNoteContentInputField(isDark: isDark),
                       ),
                     ),
                   ],
@@ -246,7 +252,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
   // ),
 
   // Note title
-  Widget _buildNoteTitleInputField() {
+  Widget _buildNoteTitleInputField({required bool isDark}) {
     return TextField(
       controller: _noteTitleController,
       decoration: InputDecoration(
@@ -262,7 +268,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
       style: TextStyle(
         fontSize: 23,
         fontWeight: FontWeight.w500,
-        color: AppColors.primBlackColor,
+        color: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
       ),
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
@@ -275,7 +281,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
   }
 
   // Note Content
-  Widget _buildNoteContentInputField() {
+  Widget _buildNoteContentInputField({required bool isDark}) {
     return TextField(
       controller: _noteContentController,
       decoration: InputDecoration(
@@ -295,7 +301,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
         fontSize: 16,
         height: 2.0,
         fontWeight: FontWeight.w500,
-        color: AppColors.primBlackColor,
+        color: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       onTapUpOutside: (event) {
