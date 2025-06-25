@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 
+import 'models/note_model.dart';
 import 'utils/custom_theme.dart';
 import 'utils/router.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(NoteModelAdapter());
+  await Hive.openBox("notesBox");
+
   runApp(MyApp());
 }
 
