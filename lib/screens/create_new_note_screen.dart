@@ -3,11 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note_model.dart';
+import '../services/hive_services/hive_note_services.dart';
 import '../utils/colors.dart';
 
 class CreateNewNoteScreen extends StatefulWidget {
   final NoteModel? noteModel;
-  const CreateNewNoteScreen({super.key, this.noteModel});
+  final String purpose;
+  const CreateNewNoteScreen({super.key, this.noteModel, required this.purpose});
 
   @override
   State<CreateNewNoteScreen> createState() => _CreateNewNoteScreenState();
@@ -21,6 +23,8 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
   final TextEditingController _noteContentController = TextEditingController();
 
   final ValueNotifier<bool> _canBeSaved = ValueNotifier(false);
+
+  final HiveNoteService _hiveNoteService = HiveNoteService();
 
   @override
   void initState() {
@@ -40,14 +44,23 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
     }
   }
 
-  void saveDataInDatabase(NoteModel noteModel) {
-    print(
-      "############# ${noteModel.title}\n${noteModel.description}\n${noteModel.noteColorIndex}",
-    );
+  void _saveDataInDatabase({required NoteModel note, required String mode}) {
+    print("############# widget.purpose ${widget.purpose}");
+
+    if (_canBeSaved.value) {
+      mode == "edit"
+          ? _hiveNoteService.updateNotes(context: context, note: note)
+          : _hiveNoteService.addNote(context: context, note: note);
+    }
+  }
+
+  void _deleteNote(String noteId) {
+    _hiveNoteService.deleteNote(context: context, noteId: noteId);
   }
 
   @override
   Widget build(BuildContext context) {
+    print("############ noteModel.id ${widget.noteModel?.id}");
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -85,6 +98,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
                       ? IconButton(
                         onPressed: () {
                           NoteModel note = NoteModel(
+                            id: widget.noteModel?.id,
                             title: _noteTitleController.text,
                             description: _noteContentController.text,
                             noteColorIndex: selectedColorNotifier.value,
@@ -92,7 +106,7 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
                             updatedAt: DateTime.now(),
                           );
 
-                          saveDataInDatabase(note);
+                          _saveDataInDatabase(note: note, mode: widget.purpose);
                           GoRouter.of(context).pop();
                         },
                         icon: Icon(

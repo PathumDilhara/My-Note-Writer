@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note_model.dart';
-import '../test_data.dart';
+import '../services/hive_services/hive_note_services.dart';
 import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
 import '../widgets/note_card_widget.dart';
@@ -17,7 +17,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<NoteModel> notes = testNotes;
+  // final List<NoteModel> notes = testNotes;
+
+  final HiveNoteService _hiveNoteService = HiveNoteService();
+
+  @override
+  void initState() {
+    super.initState();
+    _noteFetching();
+  }
+
+  List<NoteModel> allNotes = [];
+
+  Future<List<NoteModel>> _noteFetching() async {
+    List<NoteModel> notes = await _hiveNoteService.fetchAllNotes(
+      context: context,
+    );
+    setState(() {
+      allNotes = notes;
+    });
+    for (var i in allNotes) {
+      print("*********************** note ids all ${i.id}");
+    }
+    return notes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context).push("/${AppRouterPaths.createNewNoteScreen}");
+          GoRouter.of(context).push(
+            "/${AppRouterPaths.createNewNoteScreen}",
+            extra: {"mode": "create"},
+          );
         },
         backgroundColor:
             isDark
@@ -123,36 +149,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 : AppColors.primButtonBGColor,
         child: Icon(Icons.add, size: 30, color: AppColors.primWhiteColor),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: StaggeredGrid.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  children:
-                      notes
-                          .map(
-                            (elt) => InkWell(
-                              onTap: () {
-                                GoRouter.of(context).push(
-                                  "/${AppRouterPaths.noteViewScreen}",
-                                  extra: elt,
-                                );
-                              },
-                              child: NoteCardWidget(noteModel: elt),
-                            ),
-                          )
-                          .toList(),
+      body:
+          allNotes.isEmpty
+              ? Center(
+                child: Text(
+                  "You haven't added any notes yet.",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
+              )
+              : Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: StaggeredGrid.count(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5,
+                          children:
+                              allNotes
+                                  .map(
+                                    (elt) => InkWell(
+                                      onTap: () {
+                                        GoRouter.of(context).push(
+                                          "/${AppRouterPaths.noteViewScreen}",
+                                          extra: elt,
+                                        );
+                                      },
+                                      child: NoteCardWidget(noteModel: elt),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

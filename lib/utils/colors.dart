@@ -18,6 +18,8 @@ class AppColors {
   static const Color primBlackColor = Color(0xFF121212);
   static const Color primDarkScaffoldColor = Color(0xFF222732);
   static const Color primGreyColor = Colors.grey;
+  static const Color primSnackbarErrorColor = Colors.redAccent;
+  static const Color primSnackbarDarkBGColor = Colors.black38;
 
   // static const List<MapEntry<Color, String>> noteColors = [
   //   MapEntry(Colors.indigo, "Indigo"),

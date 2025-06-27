@@ -3,30 +3,42 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note_model.dart';
+import '../services/hive_services/hive_note_services.dart';
 import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
 
 class NoteViewerScreen extends StatefulWidget {
   final NoteModel noteModel;
   const NoteViewerScreen({super.key, required this.noteModel});
-
   @override
   State<NoteViewerScreen> createState() => _NoteViewerScreenState();
 }
 
 class _NoteViewerScreenState extends State<NoteViewerScreen> {
-  final ValueNotifier<int> selectedColorNotifier = ValueNotifier(0);
+  // final ValueNotifier<int> selectedColorNotifier = ValueNotifier(0);
+  final HiveNoteService _hiveNoteService = HiveNoteService();
 
   @override
   void initState() {
     super.initState();
-    selectedColorNotifier.value = widget.noteModel.noteColorIndex;
+    // selectedColorNotifier.value = widget.noteModel.noteColorIndex;
   }
 
-  String  _dateTime(DateTime dateTime) {
+  String _dateTime(DateTime dateTime) {
     String date = dateTime.toString().split(" ")[0];
     List<String> time = dateTime.toString().split(" ")[1].split(":");
     return "$date   ${time[0]}:${time[1]}";
+  }
+
+  void _deleteNote(String noteId) {
+    _hiveNoteService.deleteNote(context: context, noteId: noteId);
+  }
+
+  void _createNoteNavigator(){
+    GoRouter.of(context).push(
+      "/${AppRouterPaths.createNewNoteScreen}",
+      extra: {"note": widget.noteModel, "mode": "edit"},
+    );
   }
 
   @override
@@ -37,14 +49,12 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     var colorsList =
         isDark ? AppColors.noteColorsDarkAll : AppColors.noteColorsAll;
-    return ValueListenableBuilder(
-      valueListenable: selectedColorNotifier,
-      builder: (context, value, child) {
         return Scaffold(
-          backgroundColor: colorsList[selectedColorNotifier.value][2],
+          backgroundColor: colorsList[widget.noteModel.noteColorIndex][2],
           appBar: AppBar(
             title: Text(
               widget.noteModel.title,
+              maxLines: 2,
               style: TextStyle(
                 fontSize: 23,
                 fontFamily: GoogleFonts.poppins().fontFamily,
@@ -53,150 +63,144 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
             actions: [
               IconButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return _buildColorPicker(colorsList);
-                    },
-                  );
-                },
-                icon: Icon(Icons.color_lens),
-              ),
-              IconButton(
-                onPressed: () {
-                  GoRouter.of(context).push(
-                    "/${AppRouterPaths.createNewNoteScreen}",
-                    extra: widget.noteModel,
-                  );
+                  _createNoteNavigator();
                 },
                 icon: Icon(Icons.edit_rounded),
               ),
-            ],
-            backgroundColor: colorsList[selectedColorNotifier.value][0],
-          ),
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 0,
-                      top: 12,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(_dateTime(widget.noteModel.updatedAt)),
-                      ),
-                    ),
-                    // Full screen painter
-                    SizedBox(
-                      width: screenWidth,
-                      height:
-                          constraints.maxHeight > screenHeight
-                              ? constraints.maxHeight
-                              : screenHeight,
-                      child: CustomPaint(
-                        painter: RuledPaperPainter(
-                          lineColor: colorsList[selectedColorNotifier.value][0]
-                              .withValues(alpha: isDark ? 0.8 : 0.3),
-                          lineHeight: 32,
-                        ),
-                      ),
-                    ),
-
-                    // Text content
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 32,
-                      ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(height: 36),
-
-                            Text(
-                              widget.noteModel.description,
-                              style: TextStyle(
-                                fontSize: 16,
-                                height: 2.0,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildColorPicker(var colorsList) {
-    return ValueListenableBuilder(
-      valueListenable: selectedColorNotifier,
-      builder: (context, value, child) {
-        return AlertDialog(
-          backgroundColor: colorsList[selectedColorNotifier.value][2],
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 0,
-                  childAspectRatio: 1,
-                ),
-                itemCount: colorsList.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      selectedColorNotifier.value = index;
-                    },
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Icon(
-                            Icons.circle,
-                            color: colorsList[index][0],
-                            size: 50,
-                          ),
-                        ),
-                        if (index == selectedColorNotifier.value)
-                          Positioned(
-                            right: 0,
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Icon(
-                              Icons.done,
-                              color: AppColors.primWhiteColor,
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
+              IconButton(
+                onPressed: () {
+                  GoRouter.of(context).pop();
+                  _deleteNote(widget.noteModel.id);
                 },
+                icon: Icon(Icons.delete),
               ),
+            ],
+            backgroundColor: colorsList[widget.noteModel.noteColorIndex][0],
+          ),
+          body: GestureDetector(
+            onDoubleTap: () => _createNoteNavigator(),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 12,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(_dateTime(widget.noteModel.updatedAt)),
+                        ),
+                      ),
+                      // Full screen painter
+                      SizedBox(
+                        width: screenWidth,
+                        height:
+                            constraints.maxHeight > screenHeight
+                                ? constraints.maxHeight
+                                : screenHeight,
+                        child: CustomPaint(
+                          painter: RuledPaperPainter(
+                            lineColor: colorsList[widget.noteModel.noteColorIndex][0]
+                                .withValues(alpha: isDark ? 0.8 : 0.3),
+                            lineHeight: 32,
+                          ),
+                        ),
+                      ),
+            
+                      // Text content
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 32,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 36),
+            
+                              Text(
+                                widget.noteModel.description,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  height: 2.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: GoogleFonts.poppins().fontFamily,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         );
-      },
-    );
   }
+
+  // Widget _buildColorPicker(var colorsList) {
+  //   return ValueListenableBuilder(
+  //     valueListenable: selectedColorNotifier,
+  //     builder: (context, value, child) {
+  //       return AlertDialog(
+  //         backgroundColor: colorsList[selectedColorNotifier.value][2],
+  //         content: SizedBox(
+  //           width: MediaQuery.of(context).size.width,
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(16.0),
+  //             child: GridView.builder(
+  //               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //                 crossAxisCount: 3,
+  //                 crossAxisSpacing: 10,
+  //                 mainAxisSpacing: 0,
+  //                 childAspectRatio: 1,
+  //               ),
+  //               itemCount: colorsList.length,
+  //               shrinkWrap: true,
+  //               physics: NeverScrollableScrollPhysics(),
+  //               itemBuilder: (context, index) {
+  //                 return GestureDetector(
+  //                   onTap: () {
+  //                     selectedColorNotifier.value = index;
+  //                   },
+  //                   child: Stack(
+  //                     children: [
+  //                       Positioned.fill(
+  //                         child: Icon(
+  //                           Icons.circle,
+  //                           color: colorsList[index][0],
+  //                           size: 50,
+  //                         ),
+  //                       ),
+  //                       if (index == selectedColorNotifier.value)
+  //                         Positioned(
+  //                           right: 0,
+  //                           left: 0,
+  //                           top: 0,
+  //                           bottom: 0,
+  //                           child: Icon(
+  //                             Icons.done,
+  //                             color: AppColors.primWhiteColor,
+  //                           ),
+  //                         ),
+  //                     ],
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
 
 // SizedBox(width: 10),

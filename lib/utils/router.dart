@@ -56,8 +56,10 @@ class GoRouterClass {
         name: AppRouterPaths.createNewNoteScreen,
         path: "/${AppRouterPaths.createNewNoteScreen}",
         builder: (context, state) {
-          final NoteModel? noteModel = state.extra as NoteModel?;
-          return CreateNewNoteScreen(noteModel: noteModel);
+          final data = state.extra as Map<String, dynamic>?;
+          final note = data?['note'] as NoteModel?;
+          final purpose = data?['mode'] as String? ?? 'create';
+          return CreateNewNoteScreen(noteModel: note, purpose: purpose);
         },
       ),
     ],
