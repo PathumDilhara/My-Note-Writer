@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../models/note_model.dart';
-import '../services/hive_services/hive_note_services.dart';
+import '../services/provider_services/note_service_provider.dart';
 import '../utils/colors.dart';
 
 class CreateNewNoteScreen extends StatefulWidget {
@@ -24,8 +25,6 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
 
   final ValueNotifier<bool> _canBeSaved = ValueNotifier(false);
 
-  final HiveNoteService _hiveNoteService = HiveNoteService();
-
   @override
   void initState() {
     super.initState();
@@ -44,23 +43,32 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
     }
   }
 
-  void _saveDataInDatabase({required NoteModel note, required String mode}) {
-    print("############# widget.purpose ${widget.purpose}");
+  void _saveDataInDatabase({
+    required NoteModel note,
+    required String mode,
+  }) async {
+    // print("############# widget.purpose ${widget.purpose}");
+    final NoteServiceProvider noteServiceProvider =
+        Provider.of<NoteServiceProvider>(context, listen: false);
 
     if (_canBeSaved.value) {
-      mode == "edit"
-          ? _hiveNoteService.updateNotes(context: context, note: note)
-          : _hiveNoteService.addNote(context: context, note: note);
+      await noteServiceProvider.storeNotes(
+        note: note,
+        context: context,
+        mode: mode,
+      );
     }
   }
 
-  void _deleteNote(String noteId) {
-    _hiveNoteService.deleteNote(context: context, noteId: noteId);
-  }
+  // void _deleteNote(String noteId) {
+  //   final NoteServiceProvider noteServiceProvider =
+  //       Provider.of<NoteServiceProvider>(context);
+  //   noteServiceProvider.deleteNote(context: context, noteId: noteId);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    print("############ noteModel.id ${widget.noteModel?.id}");
+    // print("############ noteModel.id ${widget.noteModel?.id}");
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -219,29 +227,27 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
                     child: SizedBox(
                       width: 50,
                       height: 50,
-                      child: Expanded(
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Icon(
+                              Icons.circle,
+                              color: colorsList[index][0],
+                              size: 50,
+                            ),
+                          ),
+                          if (index == selectedColorNotifier.value)
+                            Positioned(
+                              right: 0,
+                              left: 0,
+                              top: 0,
+                              bottom: 0,
                               child: Icon(
-                                Icons.circle,
-                                color: colorsList[index][0],
-                                size: 50,
+                                Icons.done,
+                                color: AppColors.primWhiteColor,
                               ),
                             ),
-                            if (index == selectedColorNotifier.value)
-                              Positioned(
-                                right: 0,
-                                left: 0,
-                                top: 0,
-                                bottom: 0,
-                                child: Icon(
-                                  Icons.done,
-                                  color: AppColors.primWhiteColor,
-                                ),
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
                     ),
                   );

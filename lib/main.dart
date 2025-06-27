@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 
 import 'models/note_model.dart';
+import 'services/provider_services/note_service_provider.dart';
 import 'utils/custom_theme.dart';
 import 'utils/router.dart';
 
@@ -10,7 +12,12 @@ void main() async {
   Hive.registerAdapter(NoteModelAdapter());
   await Hive.openBox("notesBox");
 
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => NoteServiceProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

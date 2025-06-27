@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../models/note_model.dart';
-import '../services/hive_services/hive_note_services.dart';
+import '../services/provider_services/note_service_provider.dart';
 import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
 
 class NoteViewerScreen extends StatefulWidget {
-  final NoteModel noteModel;
-  const NoteViewerScreen({super.key, required this.noteModel});
+  final String id;
+  const NoteViewerScreen({super.key, required this.id});
   @override
   State<NoteViewerScreen> createState() => _NoteViewerScreenState();
 }
 
 class _NoteViewerScreenState extends State<NoteViewerScreen> {
-  // final ValueNotifier<int> selectedColorNotifier = ValueNotifier(0);
-  final HiveNoteService _hiveNoteService = HiveNoteService();
-
   @override
   void initState() {
     super.initState();
-    // selectedColorNotifier.value = widget.noteModel.noteColorIndex;
   }
 
   String _dateTime(DateTime dateTime) {
@@ -30,14 +27,22 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     return "$date   ${time[0]}:${time[1]}";
   }
 
-  void _deleteNote(String noteId) {
-    _hiveNoteService.deleteNote(context: context, noteId: noteId);
+  void _deleteNote(String noteId) async {
+    final NoteServiceProvider noteServiceProvider =
+        Provider.of<NoteServiceProvider>(context, listen: false);
+    await noteServiceProvider.deleteNote(context: context, noteId: noteId);
   }
 
-  void _createNoteNavigator(){
+  void _createNoteNavigator() {
+    NoteServiceProvider noteProvider = Provider.of<NoteServiceProvider>(
+      context,listen: false
+    );
+    final NoteModel note = noteProvider.notes.firstWhere(
+      (note) => note.id == widget.id,
+    );
     GoRouter.of(context).push(
       "/${AppRouterPaths.createNewNoteScreen}",
-      extra: {"note": widget.noteModel, "mode": "edit"},
+      extra: {"note": note, "mode": "edit"},
     );
   }
 
@@ -45,15 +50,20 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     var colorsList =
         isDark ? AppColors.noteColorsDarkAll : AppColors.noteColorsAll;
+
+    return Consumer<NoteServiceProvider>(
+      builder: (context, noteProvider, child) {
+        final NoteModel noteModel = noteProvider.notes.firstWhere(
+          (note) => note.id == widget.id,
+        );
         return Scaffold(
-          backgroundColor: colorsList[widget.noteModel.noteColorIndex][2],
+          backgroundColor: colorsList[noteModel.noteColorIndex][2],
           appBar: AppBar(
             title: Text(
-              widget.noteModel.title,
+              noteModel.title,
               maxLines: 2,
               style: TextStyle(
                 fontSize: 23,
@@ -70,12 +80,12 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
               IconButton(
                 onPressed: () {
                   GoRouter.of(context).pop();
-                  _deleteNote(widget.noteModel.id);
+                  _deleteNote(noteModel.id);
                 },
                 icon: Icon(Icons.delete),
               ),
             ],
-            backgroundColor: colorsList[widget.noteModel.noteColorIndex][0],
+            backgroundColor: colorsList[noteModel.noteColorIndex][0],
           ),
           body: GestureDetector(
             onDoubleTap: () => _createNoteNavigator(),
@@ -89,7 +99,7 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                         top: 12,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(_dateTime(widget.noteModel.updatedAt)),
+                          child: Text(_dateTime(noteModel.updatedAt)),
                         ),
                       ),
                       // Full screen painter
@@ -101,13 +111,13 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                                 : screenHeight,
                         child: CustomPaint(
                           painter: RuledPaperPainter(
-                            lineColor: colorsList[widget.noteModel.noteColorIndex][0]
+                            lineColor: colorsList[noteModel.noteColorIndex][0]
                                 .withValues(alpha: isDark ? 0.8 : 0.3),
                             lineHeight: 32,
                           ),
                         ),
                       ),
-            
+
                       // Text content
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -122,9 +132,9 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               SizedBox(height: 36),
-            
+
                               Text(
-                                widget.noteModel.description,
+                                noteModel.description,
                                 style: TextStyle(
                                   fontSize: 16,
                                   height: 2.0,
@@ -143,6 +153,8 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
             ),
           ),
         );
+      },
+    );
   }
 
   // Widget _buildColorPicker(var colorsList) {

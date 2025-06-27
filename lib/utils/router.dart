@@ -25,8 +25,8 @@ class GoRouterClass {
         name: "/${AppRouterPaths.noteViewScreen}",
         path: "/${AppRouterPaths.noteViewScreen}",
         builder: (context, state) {
-          final note = state.extra as NoteModel;
-          return NoteViewerScreen(noteModel: note);
+          final id = state.extra as String;
+          return NoteViewerScreen(id: id);
         },
       ),
 

@@ -24,7 +24,7 @@ class HiveNoteService {
     return _noteBox.isEmpty;
   }
 
-  Future<void> _saveInitialNotes() async {
+  Future<void> createInitialNotes() async {
     if (await _isUserNew()) {
       try {
         await _noteBox.put("notes", initialNotes);
@@ -33,9 +33,8 @@ class HiveNoteService {
   }
 
   Future<List<NoteModel>> fetchAllNotes({required BuildContext context}) async {
-    _saveInitialNotes();
     try {
-      dynamic notes = _noteBox.get("notes");
+      dynamic notes = _noteBox.get("notes", defaultValue: []);
       if (notes != null && notes is List<dynamic>) {
         return notes.cast<NoteModel>().toList();
       }
