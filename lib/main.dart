@@ -15,6 +15,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(NoteModelAdapter());
   await Hive.openBox("notesBox");
+  await Hive.openBox("appDataBox");
 
   FlutterNativeSplash.remove();
 

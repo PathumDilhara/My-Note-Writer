@@ -4,10 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../models/app_update_message_model.dart';
+import '../services/app_services/app_service.dart';
 import '../services/provider_services/note_service_provider.dart';
+import '../services/spring_boot_services/spring_boot_update_service.dart';
 import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
 import '../widgets/note_card_widget.dart';
+import '../widgets/update_dialog_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +22,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late NoteServiceProvider noteServiceProvider;
+  final SpringBootUpdateService springBootUpdateService =
+      SpringBootUpdateService();
 
   @override
   void initState() {
@@ -30,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         listen: false,
       ).loadNotes(context: context);
     });
+    updateDialogLoader();
   }
 
   @override
@@ -41,6 +48,42 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     noteServiceProvider.createInitialNote();
+  }
+
+  void updateDialogLoader() async {
+    // print("############ updateDialogLoader");
+    try {
+      UpdateDialogBoxWidget updateDialogBoxWidget = UpdateDialogBoxWidget();
+      AppUpdateMessageModel? updateMessage =
+          await springBootUpdateService.getUpdateMessage();
+
+      final bool isUpdatePostponed = await AppServices().isUpdatesPostponed();
+
+      final String currentVersion = await AppServices().getAppCurrentVersion();
+      final bool isVersionOutsDated = await AppServices().isVersionOutdated(
+        newVersion: updateMessage?.newVersion ?? "1.0.0",
+        currentVersion: currentVersion,
+      );
+
+      // print(
+      //   "############updateDialogLoader isUpdatePostponed  ${!isUpdatePostponed} isVersionOutsDated $isVersionOutsDated}",
+      // );
+      // print(
+      //   "###################updateDialogLoader updateMessage ${updateMessage== null}",
+      // );
+      if (!isUpdatePostponed && isVersionOutsDated) {
+        if (updateMessage != null && mounted) {
+          updateDialogBoxWidget.dialogBoxNormal(
+            context: context,
+            updateTitle: updateMessage.updateTitle,
+            updateDescription: updateMessage.updateDescription,
+            canIgnore: updateMessage.canIgnore,
+          );
+        }
+      }
+    } catch (_) {
+      // print("############ updateDialogLoader err $err}");
+    }
   }
 
   @override

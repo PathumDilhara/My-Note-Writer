@@ -19,7 +19,7 @@ class HiveNoteService {
   // Database reference
   final _noteBox = Hive.box("notesBox");
 
-  // Check whether user uis new
+  // Check whether user is new
   Future<bool> _isUserNew() async {
     return _noteBox.isEmpty;
   }
