@@ -33,6 +33,8 @@ class HiveNoteService {
   }
 
   Future<List<NoteModel>> fetchAllNotes({required BuildContext context}) async {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     try {
       dynamic notes = _noteBox.get("notes", defaultValue: []);
       if (notes != null && notes is List<dynamic>) {
@@ -40,7 +42,11 @@ class HiveNoteService {
       }
       return [];
     } catch (_) {
-      customSnackBarWidget(context, "Error fetching notes re-open app");
+      customSnackBarWidget(
+        context: context,
+        title: "Error fetching notes re-open app",
+        isDark: isDark,
+      );
       return [];
     }
   }
@@ -50,16 +56,27 @@ class HiveNoteService {
     required NoteModel note,
     required BuildContext context,
   }) async {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     try {
       final dynamic allNotes = await _noteBox.get("notes");
       allNotes.add(note);
       await _noteBox.put("notes", allNotes);
       if (context.mounted) {
-        customSnackBarWidget(context, "Note saved.");
+        customSnackBarWidget(
+          context: context,
+          title: "Note saved.",
+          isDark: isDark,
+        );
       }
     } catch (_) {
       if (context.mounted) {
-        customSnackBarWidget(context, "Error saving note", isError: true);
+        customSnackBarWidget(
+          context: context,
+          title: "Error saving note",
+          isDark: isDark,
+          isError: true,
+        );
       }
     }
   }
@@ -69,6 +86,7 @@ class HiveNoteService {
     required NoteModel note,
     required BuildContext context,
   }) async {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     try {
       // print("#################  note.id=${note.id}");
       final dynamic allNotes = await _noteBox.get("notes");
@@ -81,11 +99,20 @@ class HiveNoteService {
       allNotes[index] = note;
       await _noteBox.put("notes", allNotes);
       if (context.mounted) {
-        customSnackBarWidget(context, "Note updated.");
+        customSnackBarWidget(
+          context: context,
+          title: "Note updated.",
+          isDark: isDark,
+        );
       }
     } catch (err) {
       if (context.mounted) {
-        customSnackBarWidget(context, "Error updating note", isError: true);
+        customSnackBarWidget(
+          context: context,
+          title: "Error updating note",
+          isDark: isDark,
+          isError: true,
+        );
       }
     }
   }
@@ -95,16 +122,27 @@ class HiveNoteService {
     required String noteId,
     required BuildContext context,
   }) async {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     try {
       final dynamic allNotes = await _noteBox.get("notes");
       allNotes.removeWhere((elt) => elt.id == noteId);
       await _noteBox.put("notes", allNotes);
       if (context.mounted) {
-        customSnackBarWidget(context, "Note deleted.");
+        customSnackBarWidget(
+          context: context,
+          title: "Note deleted.",
+          isDark: isDark,
+        );
       }
     } catch (err) {
       if (context.mounted) {
-        customSnackBarWidget(context, "Error deleting note", isError: true);
+        customSnackBarWidget(
+          context: context,
+          title: "Error deleting note",
+          isDark: isDark,
+          isError: true,
+        );
       }
     }
   }

@@ -14,13 +14,15 @@ class ContactUsScreen extends StatelessWidget {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: Row(
-        children: [
-          Text("Contact Us"),
-          SizedBox(width: 10,),
-          Icon(Icons.contacts_outlined,size: 25,)
-        ],
-      )),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text("Contact Us"),
+            SizedBox(width: 10),
+            Icon(Icons.contacts_outlined, size: 25),
+          ],
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -66,8 +68,9 @@ class ContactUsScreen extends StatelessWidget {
                     // Handle the case when the email app is not available
                     if (context.mounted) {
                       customSnackBarWidget(
-                        context,
-                        "No email app found!",
+                        context: context,
+                        title: "No email app found!",
+                        isDark: isDark,
                         isError: true,
                       );
                     }
@@ -75,8 +78,9 @@ class ContactUsScreen extends StatelessWidget {
                 } catch (err) {
                   if (context.mounted) {
                     customSnackBarWidget(
-                      context,
-                      "Something went wrong!",
+                      context: context,
+                      title: "Something went wrong!",
+                      isDark: isDark,
                       isError: true,
                     );
                   }

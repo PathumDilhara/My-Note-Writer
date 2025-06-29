@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
 
-void customSnackBarWidget(
-  BuildContext context,
-  String title, {
+void customSnackBarWidget({
+  required BuildContext context,
+  required String title,
+  required bool isDark,
   bool isError = false,
-  bool isDark = true,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -29,7 +29,7 @@ void customSnackBarWidget(
               ? AppColors.primSnackbarErrorColor
               : isDark
               ? AppColors.primSnackbarDarkBGColor
-              : AppColors.primDarkMainTextColor,
+              : AppColors.primButtonBGColor.withValues(alpha: 0.3),
       duration: Duration(seconds: 2),
     ),
   );

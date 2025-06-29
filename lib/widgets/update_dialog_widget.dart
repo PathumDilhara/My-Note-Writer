@@ -12,13 +12,18 @@ class UpdateDialogBoxWidget {
   }
 
   UpdateDialogBoxWidget._internal();
-  
+
+  bool _isDialogOpen = false;
+
+  bool get isDialogOpen => _isDialogOpen;
+
   void dialogBoxNormal({
     required BuildContext context,
     required String updateTitle,
     required String updateDescription,
     required bool canIgnore,
   }) {
+    _isDialogOpen = !canIgnore;
     showDialog(
       context: context,
       barrierDismissible: canIgnore,
@@ -75,6 +80,7 @@ class UpdateDialogBoxWidget {
                 // TODO: navigate to update
                 print("");
                 Navigator.of(context).pop();
+                _isDialogOpen = false;
               },
               child: Text(
                 "Update Now",
