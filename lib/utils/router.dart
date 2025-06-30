@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../models/note_model.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/create_new_note_screen.dart';
+import '../screens/feedback_screen.dart';
 import '../screens/help_screen.dart';
 import '../screens/note_viewer_screen.dart';
 import '../screens/home_screen.dart';
@@ -11,7 +12,7 @@ import 'app_router_paths.dart';
 
 class GoRouterClass {
   static final router = GoRouter(
-    initialLocation: "/${AppRouterPaths.homeScreen}",
+    initialLocation: "/${AppRouterPaths.feedbackScreen}",
     routes: [
       // Home Screen
       GoRoute(
@@ -61,6 +62,13 @@ class GoRouterClass {
           final purpose = data?['mode'] as String? ?? 'create';
           return CreateNewNoteScreen(noteModel: note, purpose: purpose);
         },
+      ),
+
+      // Feedback Screen
+      GoRoute(
+        name: AppRouterPaths.feedbackScreen,
+        path: "/${AppRouterPaths.feedbackScreen}",
+        builder: (context, state) => FeedbackScreen(),
       ),
     ],
   );

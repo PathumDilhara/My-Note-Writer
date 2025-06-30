@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mynotewriter/utils/app_router_paths.dart';
+import 'package:mynotewriter/widgets/custom_button_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/colors.dart';
@@ -47,7 +50,8 @@ class ContactUsScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             // Button mailto
-            ElevatedButton.icon(
+            customButtonWidget(
+              isDark: isDark,
               onPressed: () async {
                 final Uri emailUri = Uri(
                   scheme: 'mailto',
@@ -57,7 +61,6 @@ class ContactUsScreen extends StatelessWidget {
                     'body': 'Hello,',
                   },
                 );
-
                 try {
                   if (await canLaunchUrl(emailUri)) {
                     await launchUrl(
@@ -86,23 +89,18 @@ class ContactUsScreen extends StatelessWidget {
                   }
                 }
               },
-              icon: Icon(
-                Icons.mail_outline_outlined,
-                color: AppColors.primWhiteColor,
-              ),
-              label: Text("Send Email to Support"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isDark
-                        ? AppColors.primButtonBGColorDark
-                        : AppColors.primButtonBGColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
+              icon: Icons.mail_outline_outlined,
+              label: "Send Email to Support",
+            ),
+            SizedBox(height: 10),
+
+            customButtonWidget(
+              label: "feedback",
+              onPressed: () {
+                GoRouter.of(context).push("/${AppRouterPaths.feedbackScreen}");
+              },
+              icon: Icons.feedback,
+              isDark: isDark,
             ),
           ],
         ),

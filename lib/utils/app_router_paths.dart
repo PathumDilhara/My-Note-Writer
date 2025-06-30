@@ -5,4 +5,5 @@ class AppRouterPaths{
   static final helpScreen = "helpScreen";
   static final contactUsScreen = "contactUsScreen";
   static final createNewNoteScreen = "createNewNoteScreen";
+  static final feedbackScreen = "feedbackScreen";
 }

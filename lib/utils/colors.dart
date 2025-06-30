@@ -21,32 +21,7 @@ class AppColors {
   static const Color primSnackbarErrorColor = Colors.redAccent;
   static const Color primSnackbarDarkBGColor = Colors.black38;
   static const Color primLightGreyColor = Colors.grey;
-
-  // static const List<MapEntry<Color, String>> noteColors = [
-  //   MapEntry(Colors.indigo, "Indigo"),
-  //   MapEntry(Colors.pink, "Pink"),
-  //   MapEntry(Colors.yellow, "Yellow"),
-  //   MapEntry(Colors.cyan, "Cyan"),
-  //   MapEntry(Colors.orange, "Orange"),
-  //   MapEntry(Colors.blue, "Blue"),
-  //   MapEntry(Colors.purple, "Purple"),
-  //   MapEntry(Colors.red, "Red"),
-  //   MapEntry(Colors.teal, "Teal"),
-  //   MapEntry(Colors.green, "Green"),
-  // ];
-  //
-  // static List<Color> shadedColors = [
-  //   Colors.indigo.shade100,
-  //   Colors.pink.shade100,
-  //   Colors.yellow.shade100,
-  //   Colors.cyan.shade100,
-  //   Colors.orange.shade100,
-  //   Colors.blue.shade100,
-  //   Colors.purple.shade100,
-  //   Colors.red.shade100,
-  //   Colors.teal.shade100,
-  //   Colors.green.shade100,
-  // ];
+  static Color primScaffoldBackgroundColor = Colors.grey.shade50;
 
   static List<List<dynamic>> noteColorsAll = [
     [Colors.indigo, "Indigo", Colors.indigo.shade100],

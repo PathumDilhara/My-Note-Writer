@@ -23,7 +23,7 @@ class AppTheme {
     ),
     brightness: Brightness.light,
     fontFamily: GoogleFonts.poppins().fontFamily,
-    scaffoldBackgroundColor: AppColors.primWhiteColor,
+    scaffoldBackgroundColor: AppColors.primScaffoldBackgroundColor,
   );
 
   // Dark mode
