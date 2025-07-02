@@ -27,15 +27,17 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     return "$date   ${time[0]}:${time[1]}";
   }
 
-  void _deleteNote(String noteId) async {
-    final NoteServiceProvider noteServiceProvider =
-        Provider.of<NoteServiceProvider>(context, listen: false);
-    await noteServiceProvider.deleteNote(context: context, noteId: noteId);
+  void _deleteNote(String noteId, bool isDark) async {
+    // final NoteServiceProvider noteServiceProvider =
+    //     Provider.of<NoteServiceProvider>(context, listen: false);
+    _buildDeleteConfirmationDialog(noteId, isDark);
+    // await noteServiceProvider.deleteNote(context: context, noteId: noteId);
   }
 
   void _createNoteNavigator() {
     NoteServiceProvider noteProvider = Provider.of<NoteServiceProvider>(
-      context,listen: false
+      context,
+      listen: false,
     );
     final NoteModel note = noteProvider.notes.firstWhere(
       (note) => note.id == widget.id,
@@ -79,8 +81,8 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  GoRouter.of(context).pop();
-                  _deleteNote(noteModel.id);
+                  // GoRouter.of(context).pop();
+                  _deleteNote(noteModel.id, isDark);
                 },
                 icon: Icon(Icons.delete),
               ),
@@ -157,62 +159,66 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
     );
   }
 
-  // Widget _buildColorPicker(var colorsList) {
-  //   return ValueListenableBuilder(
-  //     valueListenable: selectedColorNotifier,
-  //     builder: (context, value, child) {
-  //       return AlertDialog(
-  //         backgroundColor: colorsList[selectedColorNotifier.value][2],
-  //         content: SizedBox(
-  //           width: MediaQuery.of(context).size.width,
-  //           child: Padding(
-  //             padding: const EdgeInsets.all(16.0),
-  //             child: GridView.builder(
-  //               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //                 crossAxisCount: 3,
-  //                 crossAxisSpacing: 10,
-  //                 mainAxisSpacing: 0,
-  //                 childAspectRatio: 1,
-  //               ),
-  //               itemCount: colorsList.length,
-  //               shrinkWrap: true,
-  //               physics: NeverScrollableScrollPhysics(),
-  //               itemBuilder: (context, index) {
-  //                 return GestureDetector(
-  //                   onTap: () {
-  //                     selectedColorNotifier.value = index;
-  //                   },
-  //                   child: Stack(
-  //                     children: [
-  //                       Positioned.fill(
-  //                         child: Icon(
-  //                           Icons.circle,
-  //                           color: colorsList[index][0],
-  //                           size: 50,
-  //                         ),
-  //                       ),
-  //                       if (index == selectedColorNotifier.value)
-  //                         Positioned(
-  //                           right: 0,
-  //                           left: 0,
-  //                           top: 0,
-  //                           bottom: 0,
-  //                           child: Icon(
-  //                             Icons.done,
-  //                             color: AppColors.primWhiteColor,
-  //                           ),
-  //                         ),
-  //                     ],
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  void _buildDeleteConfirmationDialog(String noteId, bool isDark) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor:
+                isDark ? AppColors.primBlackColor : AppColors.primWhiteColor,
+            title: Column(
+              children: [
+                Text("Delete Note"),
+                SizedBox(height: 5),
+                Divider(
+                  color:
+                      isDark
+                          ? AppColors.primLightGreyColor
+                          : AppColors.primLightDividerColor,
+                ),
+              ],
+            ),
+            content: Text(
+              "Are you sure you want to delete this note? This action cannot be undone.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                    color: AppColors.primButtonBGColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  GoRouter.of(
+                    context,
+                  ).pushReplacement("/${AppRouterPaths.homeScreen}");
+                  final NoteServiceProvider noteServiceProvider =
+                      Provider.of<NoteServiceProvider>(context, listen: false);
+                  await noteServiceProvider.deleteNote(
+                    context: context,
+                    noteId: noteId,
+                  );
+                },
+                child: Text(
+                  "Delete",
+                  style: TextStyle(
+                    color: AppColors.primButtonBGColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
 }
 
 // SizedBox(width: 10),

@@ -9,17 +9,22 @@ class SpringBootUpdateService {
     // print("##############");
     try {
       final url = Uri.parse(
-        "https://springbootserver-production.up.railway.app/api/v1/appUpdate/123",
+        "https://springbootserver-production.up.railway.app/api/v1/appUpdate/getInfo/90235584-4330-4dfd-88e5-3408b4d7831d",
       );
-      final response = await http.get(url);
+      // 90235584-4330-4dfd-88e5-3408b4d7831d
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-api-key': 'FLUTTER_APP_KEY_2e81df3a-b618-4dc4-8571-f5b72d4cc2d9',
+      });
 
       // print("##############isEmpty ${response.body}");
 
       if (response.statusCode == 200) {
+        // print("############## success in update info fetching ${response.statusCode} ${response.body} ${response.headers}");
         final jsonData = jsonDecode(response.body);
         return AppUpdateMessageModel.fromJson(jsonData);
       } else {
-        // print("############## err");
+        // print("############## error in update info fetching ${response.statusCode} ${response.body}");
         return null;
       }
 

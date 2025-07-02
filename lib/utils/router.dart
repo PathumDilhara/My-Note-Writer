@@ -12,7 +12,7 @@ import 'app_router_paths.dart';
 
 class GoRouterClass {
   static final router = GoRouter(
-    initialLocation: "/${AppRouterPaths.feedbackScreen}",
+    initialLocation: "/${AppRouterPaths.homeScreen}",
     routes: [
       // Home Screen
       GoRoute(

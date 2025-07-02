@@ -26,10 +26,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   void sendFeedback(bool isDark) async {
-    print("############### Sending");
+    // print("############### Sending");
     if (_formKey.currentState!.validate()) {
       isFeedbackSending.value = true;
-      print("################# valid");
+      // print("################# valid");
 
       final FeedbackModel feedbackModel = FeedbackModel(
         sendAt: DateTime.now(),
@@ -42,16 +42,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         feedbackModel,
       );
 
-      // setState(() {
-      //   isLoading = false;
-      // });
-
-      print("########################");
+      // print("########################");
       if (mounted && isFeedbackSent) {
         GoRouter.of(
           context,
         ).pushReplacement("/${AppRouterPaths.contactUsScreen}");
       }
+      isFeedbackSending.value = false;
     }
   }
 

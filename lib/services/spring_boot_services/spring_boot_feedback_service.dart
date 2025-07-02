@@ -14,29 +14,39 @@ class SpringBootFeedbackService {
   ) async {
     try {
       final url = Uri.parse(
-        "https://springbootserver-production.up.railway.app/api/v1/feedback/saveFeedback",
+        "https://springbootserver-production.up.railway.app/api/v1/feedback/save",
       );
 
       final response = await http.post(
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'x-api-key': 'FLUTTER_APP_KEY_2e81df3a-b618-4dc4-8571-f5b72d4cc2d9',
         },
         body: jsonEncode({
           "id": feedbackModel.id,
-          "sendAt": feedbackModel.sendAt,
+          "sendAt": feedbackModel.sendAt.toIso8601String(),
           "feedback": feedbackModel.feedback,
         }),
       );
 
-      if (response.statusCode == 200) {
-        print("✅ Success: ${response.body}");
-      } else {
-        print("❌ Error ${response.statusCode}: ${response.body}");
+      if (response.statusCode != 200) {
+        if (context.mounted) {
+          customSnackBarWidget(
+            context: context,
+            title: "Unable to sent feedback",
+            isDark: isDark,
+            isError: true,
+          );
+        }
+        // print(
+        //   "❌ Error ${response.statusCode}: ${response.body} ---> ${response.headers}",
+        // );
+        return false;
       }
 
       // await Future.delayed(Duration(seconds: 3));
-
+      // print("✅ Success: ${response.body}");
       if (context.mounted) {
         customSnackBarWidget(
           context: context,
@@ -45,7 +55,6 @@ class SpringBootFeedbackService {
         );
       }
       return true;
-      // return null;
     } catch (err) {
       await Future.delayed(Duration(seconds: 1));
 
@@ -57,10 +66,8 @@ class SpringBootFeedbackService {
           isError: true,
         );
       }
-      print("############## saveFeedback err $err");
-
+      // print("############## saveFeedback err $err");
       return false;
-      // return null;
     }
   }
 }

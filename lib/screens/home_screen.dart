@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mynotewriter/widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import '../models/app_update_message_model.dart';
@@ -13,6 +12,7 @@ import '../services/provider_services/note_service_provider.dart';
 import '../services/spring_boot_services/spring_boot_update_service.dart';
 import '../utils/app_router_paths.dart';
 import '../utils/colors.dart';
+import '../widgets/custom_snackbar.dart';
 import '../widgets/note_card_widget.dart';
 import '../widgets/update_dialog_widget.dart';
 
@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
               isDark
                   ? AppColors.primButtonBGColorDark
                   : AppColors.primButtonBGColor,
-          child: Icon(Icons.add, size: 30, color: AppColors.primWhiteColor),
+          child: Icon(Icons.add, size: 30, color:isDark? AppColors.primWhiteColor :AppColors.primBlackColor),
         ),
         body: Consumer<NoteServiceProvider>(
           builder: (context, noteProvider, child) {
