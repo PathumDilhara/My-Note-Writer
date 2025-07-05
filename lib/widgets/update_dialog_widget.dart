@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/hive_services/hive_user_service.dart';
+import '../services/hive_services/hive_app_service.dart';
 import '../utils/colors.dart';
 
 class UpdateDialogBoxWidget {
@@ -61,7 +61,7 @@ class UpdateDialogBoxWidget {
             if (canIgnore)
               TextButton(
                 onPressed: () async {
-                  HiveUserService().storePostponedDate(DateTime.now());
+                  HiveAppService().storePostponedDate(DateTime.now());
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }

@@ -8,7 +8,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   final String _privacyPolicyUrl =
-      "https://raw.githubusercontent.com/Somalatha-Weerakoon/Status-Verse-privacy-Policy/refs/heads/main/privacy_policy.md";
+      "huoihhttps://raw.githubusercontent.com/Somalatha-Weerakoon/Status-Verse-privacy-Policy/refs/heads/main/privacy_policy.md";
 
   Future<String> fetchPrivacyPolicy() async {
     final response = await http.get(Uri.parse(_privacyPolicyUrl));

@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     noteServiceProvider.createInitialNote();
   }
+
   final UpdateDialogBoxWidget _updateDialogBoxWidget = UpdateDialogBoxWidget();
   void updateDialogLoader() async {
     // print("############ updateDialogLoader");
