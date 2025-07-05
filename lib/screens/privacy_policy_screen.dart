@@ -7,6 +7,7 @@ import '../utils/colors.dart';
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
+  // TODO : replace with exact one
   final String _privacyPolicyUrl =
       "huoihhttps://raw.githubusercontent.com/Somalatha-Weerakoon/Status-Verse-privacy-Policy/refs/heads/main/privacy_policy.md";
 
@@ -22,13 +23,15 @@ class PrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Row(
-        children: [
-          Text("Privacy Policy"),
-          SizedBox(width: 10,),
-          Icon(Icons.privacy_tip_outlined, size: 25,)
-        ],
-      )),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text("Privacy Policy"),
+            SizedBox(width: 10),
+            Icon(Icons.privacy_tip_outlined, size: 25),
+          ],
+        ),
+      ),
       body: FutureBuilder(
         future: fetchPrivacyPolicy(),
         builder: (context, snapshot) {

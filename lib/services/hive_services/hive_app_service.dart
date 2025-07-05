@@ -39,22 +39,22 @@ class HiveAppService {
           [];
       return pendingFeedbacks;
     } catch (err) {
-      print("############### getPendingFeedbacks $err");
+      // print("############### getPendingFeedbacks $err");
       return [];
     }
   }
 
   // Store sending failed feedbacks
   Future<void> storeFeedbacks({required FeedbackModel feedback}) async {
-    print("################ storing");
+    // print("################ storing");
     try {
       List<FeedbackModel> pendingFeedbacks = await getPendingFeedbacks();
       pendingFeedbacks.add(feedback);
 
       await _appDataBox.put("pending_feedbacks", pendingFeedbacks);
-      print("################ storing suc");
-    } catch (err) {
-      print("################ storing err $err");
+      // print("################ storing suc");
+    } catch (_) {
+      // print("################ storing err $err");
     }
   }
 

@@ -58,14 +58,14 @@ Future<void> pendingFeedbackSender() async {
 
   final feedbackToRemove = [];
   List<FeedbackModel> feedbacks = await hiveAppService.getPendingFeedbacks();
-  print("############ ${feedbacks.length}");
+  // print("############ ${feedbacks.length}");
 
   for (var feedback in feedbacks) {
     bool isSend = await springBootFeedbackService.savePendingFeedbacks(
       feedback,
     );
     if (isSend) {
-      print("############## pending feedback sent");
+      // print("############## pending feedback sent");
       feedbackToRemove.add(feedback);
     }
   }

@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context: context,
             updateTitle: updateMessage.updateTitle,
             updateDescription: updateMessage.updateDescription,
+            updateUrl: updateMessage.updateUrl,
             canIgnore: updateMessage.canIgnore,
           );
         }

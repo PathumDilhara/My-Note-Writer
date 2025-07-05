@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/hive_services/hive_app_service.dart';
 import '../utils/colors.dart';
@@ -21,6 +23,7 @@ class UpdateDialogBoxWidget {
     required BuildContext context,
     required String updateTitle,
     required String updateDescription,
+    required String updateUrl,
     required bool canIgnore,
   }) {
     _isDialogOpen = !canIgnore;
@@ -76,11 +79,25 @@ class UpdateDialogBoxWidget {
                 ),
               ),
             TextButton(
-              onPressed: () {
-                // TODO: navigate to update
-                print("");
-                Navigator.of(context).pop();
-                _isDialogOpen = false;
+              onPressed: () async {
+                // trying in app update
+                try {
+                  await InAppUpdate.performImmediateUpdate();
+                } catch (_) {
+                  try {
+                    // if (await canLaunchUrl(Uri.parse(updateUrl))) {
+                      await launchUrl(
+                        Uri.parse(updateUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    // }
+                  } catch (_) {}
+                } finally {
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    _isDialogOpen = false;
+                  }
+                }
               },
               child: Text(
                 "Update Now",
