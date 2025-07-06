@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import '../models/note_model.dart';
+import '../screens/about_screen.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/create_new_note_screen.dart';
 import '../screens/feedback_screen.dart';
@@ -69,6 +70,13 @@ class GoRouterClass {
         name: AppRouterPaths.feedbackScreen,
         path: "/${AppRouterPaths.feedbackScreen}",
         builder: (context, state) => FeedbackScreen(),
+      ),
+
+      // About Screen
+      GoRoute(
+        name: AppRouterPaths.aboutScreen,
+        path: "/${AppRouterPaths.aboutScreen}",
+        builder: (context, state) => AboutScreen(),
       ),
     ],
   );

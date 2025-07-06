@@ -7,9 +7,8 @@ import '../utils/colors.dart';
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
-  // TODO : replace with exact one
   final String _privacyPolicyUrl =
-      "huoihhttps://raw.githubusercontent.com/Somalatha-Weerakoon/Status-Verse-privacy-Policy/refs/heads/main/privacy_policy.md";
+      "https://raw.githubusercontent.com/Somalatha-Weerakoon/MyNoteWriter-privacy-policy/refs/heads/main/my_note_writer_privacy_policy.md";
 
   Future<String> fetchPrivacyPolicy() async {
     final response = await http.get(Uri.parse(_privacyPolicyUrl));

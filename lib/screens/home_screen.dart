@@ -201,6 +201,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
+
+                    PopupMenuItem(
+                      value: "About",
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.info_outline_rounded),
+                          SizedBox(width: 10),
+                          Text("About"),
+                        ],
+                      ),
+                    ),
                   ];
                 },
                 padding: EdgeInsets.only(right: 50),
@@ -215,6 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     GoRouter.of(
                       context,
                     ).push("/${AppRouterPaths.contactUsScreen}");
+                  } else if(value == "About"){
+                    GoRouter.of(
+                      context,
+                    ).push("/${AppRouterPaths.aboutScreen}");
                   }
                 },
                 child: Icon(Icons.more_vert, size: 30),
