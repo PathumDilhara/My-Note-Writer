@@ -66,7 +66,7 @@ class _NoteViewerScreenState extends State<NoteViewerScreen> {
           appBar: AppBar(
             title: Text(
               noteModel.title,
-              maxLines: 2,
+              maxLines: 1,
               style: TextStyle(
                 fontSize: 23,
                 fontFamily: GoogleFonts.poppins().fontFamily,

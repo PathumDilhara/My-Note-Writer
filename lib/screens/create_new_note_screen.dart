@@ -20,7 +20,6 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
   final ValueNotifier<int> selectedColorNotifier = ValueNotifier(0);
 
   final TextEditingController _noteTitleController = TextEditingController();
-
   final TextEditingController _noteContentController = TextEditingController();
 
   final ValueNotifier<bool> _canBeSaved = ValueNotifier(false);
@@ -60,18 +59,8 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
     }
   }
 
-  // void _deleteNote(String noteId) {
-  //   final NoteServiceProvider noteServiceProvider =
-  //       Provider.of<NoteServiceProvider>(context);
-  //   noteServiceProvider.deleteNote(context: context, noteId: noteId);
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // print("############ noteModel.id ${widget.noteModel?.id}");
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     var colorsList =
         isDark ? AppColors.noteColorsDarkAll : AppColors.noteColorsAll;
@@ -135,48 +124,71 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
           body: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    // Full screen painter
-                    SizedBox(
-                      width: screenWidth,
-                      height:
-                          constraints.maxHeight > screenHeight
-                              ? constraints.maxHeight
-                              : screenHeight,
-                      child: CustomPaint(
-                        painter: RuledPaperPainter(
-                          lineColor: colorsList[selectedColorNotifier.value][0]
-                              .withValues(alpha: 0.3),
-                          lineHeight: 32,
-                        ),
-                      ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 32,
+                ),
+                child: CustomPaint(
+                  painter: RuledPaperPainter(
+                    lineColor: colorsList[selectedColorNotifier.value][0]
+                        .withOpacity(0.3), // lighter line
+                    lineHeight: 32,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      // minHeight: MediaQuery.of(context).size.height*0.8,
+                      minHeight: constraints.maxHeight - kToolbarHeight,
                     ),
-
-                    // Text content
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 32,
-                      ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: _buildNoteContentInputField(isDark: isDark),
-                      ),
-                    ),
-                  ],
+                    child: _buildNoteContentInputField(isDark: isDark),
+                  ),
                 ),
               );
             },
           ),
+          // body: LayoutBuilder(
+          //   builder: (context, constraints) {
+          //     return SingleChildScrollView(
+          //       child: Stack(
+          //         children: [
+          //           // Full screen painter
+          //           SizedBox(
+          //             width: screenWidth,
+          //             height: screenHeight,
+          //             child: CustomPaint(
+          //               painter: RuledPaperPainter(
+          //                 lineColor: colorsList[selectedColorNotifier.value][0]
+          //                     .withValues(alpha: 0.3),
+          //                 lineHeight: 32,
+          //               ),
+          //             ),
+          //           ),
+          //
+          //           // Text content
+          //           Padding(
+          //             padding: const EdgeInsets.symmetric(
+          //               horizontal: 16.0,
+          //               vertical: 32,
+          //             ),
+          //             child: ConstrainedBox(
+          //               constraints: BoxConstraints(
+          //                 minHeight: screenHeight,
+          //               ),
+          //               child: _buildNoteContentInputField(isDark: isDark),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     );
+          //   },
+          // ),
         );
       },
     );
   }
 
   Widget _buildColorPicker(var colorsList, bool isDark) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return ValueListenableBuilder(
       valueListenable: selectedColorNotifier,
       builder: (context, value, child) {
@@ -206,15 +218,18 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
             ),
           ],
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
+            width:
+                MediaQuery.of(context).size.width * screenWidth > 600
+                    ? 0.5
+                    : 0.8,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  crossAxisCount: 4,
                   crossAxisSpacing: 10,
-                  mainAxisSpacing: 0,
-                  childAspectRatio: 1,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 0.6,
                 ),
                 itemCount: colorsList.length,
                 shrinkWrap: true,
@@ -260,17 +275,6 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
     );
   }
 
-  // Expanded(
-  // child: Text(
-  // colorsList[index][1],
-  // style: TextStyle(
-  // color: colorsList[index][0],
-  // // overflow: TextOverflow.ellipsis,
-  // ),
-  // // maxLines: 2,
-  // overflow: TextOverflow.ellipsis,
-  // ),
-
   // Note title
   Widget _buildNoteTitleInputField({required bool isDark}) {
     return TextField(
@@ -278,16 +282,24 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: "Note title...",
+        hintStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          color:
+              isDark
+                  ? AppColors.primWhiteColor
+                  : AppColors.primBlackColor.withValues(alpha: 0.8),
+        ),
         helperStyle: TextStyle(
-          color: AppColors.primGreyColor,
+          color: AppColors.primWhiteColor,
           fontWeight: FontWeight.w500,
           fontSize: 23,
         ),
       ),
-      maxLines: 1,
+      maxLines: null,
+      cursorColor: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
       style: TextStyle(
         fontSize: 23,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
         color: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
       ),
       onTapOutside: (event) {
@@ -304,16 +316,16 @@ class _CreateNewNoteScreenState extends State<CreateNewNoteScreen> {
   Widget _buildNoteContentInputField({required bool isDark}) {
     return TextField(
       controller: _noteContentController,
+      cursorColor: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
       decoration: InputDecoration(
         hintText: "Note content...",
         hintStyle: TextStyle(
-          color: AppColors.primGreyColor,
+          color: isDark ? AppColors.primWhiteColor : AppColors.primBlackColor,
           fontWeight: FontWeight.w500,
         ),
         border: InputBorder.none,
       ),
-      maxLines: 10000,
-      maxLength: 10000000000,
+      maxLines: null,
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
       },

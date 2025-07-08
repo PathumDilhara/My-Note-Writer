@@ -38,7 +38,12 @@ class NoteCardWidget extends StatelessWidget {
             ),
             maxLines: 1,
           ),
-          Divider(color: AppColors.primWhiteColor.withValues(alpha: 0.3)),
+          Divider(
+            color:
+                isDark
+                    ? AppColors.primWhiteColor.withValues(alpha: 0.3)
+                    : AppColors.primBlackColor.withValues(alpha: 0.4),
+          ),
           SizedBox(height: 3),
           Text(
             noteModel.description,
